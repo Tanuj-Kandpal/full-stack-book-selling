@@ -1,6 +1,8 @@
 import express from "express";
 
+const app = express();
 const userRouter = express.Router();
+app.use(express.json());
 
 userRouter.post("/signup", (req, res) => {
   const email = req.body.email;

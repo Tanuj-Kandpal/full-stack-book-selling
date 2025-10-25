@@ -2,14 +2,21 @@ const mongoose = require("mongoose");
 
 mongoose.connect("");
 
-const AdminModel = mongoose.Schema({});
+const AdminModel = mongoose.Schema({
+  email:String,
+
+});
 
 const UserModel = mongoose.Schema({
   email: String,
   password: String,
 });
 
-const CourseModel = mongoose.Schema({});
+const CourseModel = mongoose.Schema({
+  description:String,
+  
+
+});
 
 const PurchaseModel = mongoose.Schema({});
 
