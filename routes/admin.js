@@ -1,6 +1,6 @@
-const { Router } = require("express");
+import express from "express";
 
-const adminRouter = Router();
+const adminRouter = express.Router();
 
 adminRouter.post("/login", (req, res) => {});
 

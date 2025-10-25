@@ -1,6 +1,6 @@
-const { Router } = require("express");
+import express from "express";
 
-const userRouter = Router();
+const userRouter = express.Router();
 
 userRouter.post("/signup", (req, res) => {
   const email = req.body.email;
