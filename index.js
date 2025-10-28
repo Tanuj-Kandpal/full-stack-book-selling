@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import adminRouter from "./routes/admin.js";
 import userRouter from "./routes/user.js";
 import courseRouter from "./routes/course.js";
+import mongoose from "mongoose";
 
 const app = express();
 
@@ -25,9 +26,17 @@ const AuthMiddleware = (req, res, next) => {
 };
 
 const UserMiddleware = (req, res, next) => {
+  jwt.verify(token, JWT_SECRET);
   next();
 };
 
 app.use(express.json());
 
-app.listen(3000);
+const main = async () => {
+  await mongoose.connect(""
+  );
+  app.listen(3000);
+  console.log("DB connected successfully");
+};
+
+main();

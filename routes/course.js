@@ -1,5 +1,7 @@
 import express from "express";
 
+import { courseModel } from "../db";
+
 const courseRouter = express.Router();
 
 courseRouter.get("/", (req, res) => {});

@@ -1,5 +1,7 @@
 import express from "express";
 
+import { userModel } from "../db.js";
+
 const app = express();
 const userRouter = express.Router();
 app.use(express.json());
