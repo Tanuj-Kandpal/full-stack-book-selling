@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 const ObjectId = mongoose.Schema.Types.ObjectId;
 
 const adminSchema = new Schema({
-  email: { type: String, unique: true },
+  email: String,
   password: String,
   firstName: String,
   lastName: String,
