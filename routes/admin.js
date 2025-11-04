@@ -1,28 +1,12 @@
 import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-
 import z from "zod";
+import { adminModel, courseModel } from "../db.js";
 
-const JWT_ADMIN_SECRET = "test12@#$";
-
-import { adminModel } from "../db.js";
-
-const AuthMiddleware = (req, res, next) => {
-  const email = req.body.email;
-  const token = jwt.sign(
-    {
-      email: email,
-    },
-    JWT_ADMIN_SECRET
-  );
-  next();
-};
-
-const UserMiddleware = (req, res, next) => {
-  jwt.verify(token, JWT_SECRET);
-  next();
-};
+import { JWT_ADMIN_SECRET } from "../config.js";
+import { adminMiddleware } from "../middleware/admin.js";
+import { de } from "zod/locales";
 
 const adminRouter = express.Router();
 
@@ -89,10 +73,58 @@ adminRouter.post("/login", async (req, res) => {
   });
 });
 
-adminRouter.post("/course", (req, res) => {});
+adminRouter.post("/course", adminMiddleware, async (req, res) => {
+  const { description, title, price, imageUrl } = req.body;
 
-adminRouter.put("/course", (req, res) => {});
+  const adminId = req.userId;
 
-adminRouter.put("/course/bulk", (req, res) => {});
+  console.log(req.body);
+
+  const courseDb = await courseModel.create({
+    description,
+    title,
+    price,
+    imageUrl,
+    creatorid: adminId,
+  });
+
+  res.status(200).json({
+    message: "course created",
+    courseId: courseDb._id,
+  });
+});
+
+adminRouter.put("/course", adminMiddleware, async (req, res) => {
+  const adminId = req.userId;
+  const { description, title, price, imageUrl, creatorid, courseId } = req.body;
+  const adminCourse = await adminModel.updateOne(
+    {
+      _id: courseId,
+      creatorid: adminId,
+    },
+    {
+      description: description,
+      title: title,
+      price: price,
+      imageUrl: imageUrl,
+      creatorid: creatorid,
+    }
+  );
+  res.status(200).json({
+    msg: "Your course has been updated",
+  });
+});
+
+adminRouter.get("/course/bulk", adminMiddleware, (req, res) => {
+  const { adminId } = req.body;
+
+  const adminCourse = adminModel.find({
+    creatorid: adminId,
+  });
+
+  res.status(200).json({
+    adminCourse,
+  });
+});
 
 export default adminRouter;
