@@ -5,9 +5,9 @@ import jwt from "jsonwebtoken";
 
 import { JWT_USER_SECRET } from "../config.js";
 
-import { userModel } from "../db.js";
+import { purchaseModel, userModel } from "../db.js";
+import { userMiddleware } from "./../middleware/user.js";
 
-const app = express();
 const userRouter = express.Router();
 
 userRouter.post("/signup", async (req, res) => {
@@ -18,6 +18,8 @@ userRouter.post("/signup", async (req, res) => {
     firstname: z.string().max(10),
     lastname: z.string(),
   });
+
+  const saltRound = 2;
 
   const { success, error } = z.safeParse(reqBody, req.body);
 
@@ -71,8 +73,29 @@ userRouter.post("/login", async (req, res) => {
   });
 });
 
-userRouter.get("/purchases", (req, res) => {});
+userRouter.post("/purchase", userMiddleware, async (req, res) => {
+  const userId = req.userId;
+  const { courseId } = req.body;
 
-userRouter.post("/content", (req, res) => {});
+  const purchases = await purchaseModel.create({
+    userId,
+    courseId,
+  });
+
+  res.status(200).json({
+    msg: "You have successfully bought this course",
+    purchase: purchases,
+  });
+});
+
+userRouter.get("/purchases", userMiddleware, async (req, res) => {
+  const userid = req.userId;
+
+  const userPurchases = await purchaseModel.find({});
+
+  res.status(200).json({
+    msg: userPurchases,
+  });
+});
 
 export default userRouter;

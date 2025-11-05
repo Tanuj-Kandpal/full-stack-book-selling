@@ -6,7 +6,6 @@ import { adminModel, courseModel } from "../db.js";
 
 import { JWT_ADMIN_SECRET } from "../config.js";
 import { adminMiddleware } from "../middleware/admin.js";
-import { de } from "zod/locales";
 
 const adminRouter = express.Router();
 
@@ -74,12 +73,9 @@ adminRouter.post("/login", async (req, res) => {
 });
 
 adminRouter.post("/course", adminMiddleware, async (req, res) => {
-  console.log("req----->", req);
   const { description, title, price, imageUrl } = req.body;
 
   const adminId = req.adminId;
-
-  console.log("req body--->", req.body);
 
   const courseDb = await courseModel.create({
     description,
@@ -97,7 +93,7 @@ adminRouter.post("/course", adminMiddleware, async (req, res) => {
 
 adminRouter.put("/course", adminMiddleware, async (req, res) => {
   const adminId = req.adminId;
-  console.log(adminId);
+
   const { description, title, price, imageUrl, courseId } = req.body;
   const adminCourse = await courseModel.updateOne(
     {
@@ -119,8 +115,6 @@ adminRouter.put("/course", adminMiddleware, async (req, res) => {
 
 adminRouter.get("/course/bulk", adminMiddleware, async (req, res) => {
   const creatorId = req.adminId;
-
-  console.log("creator id--->", creatorId);
 
   const adminCourse = await courseModel.find({
     creatorid: creatorId,
