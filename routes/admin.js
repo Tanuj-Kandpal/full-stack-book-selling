@@ -74,11 +74,12 @@ adminRouter.post("/login", async (req, res) => {
 });
 
 adminRouter.post("/course", adminMiddleware, async (req, res) => {
+  console.log("req----->", req);
   const { description, title, price, imageUrl } = req.body;
 
-  const adminId = req.userId;
+  const adminId = req.adminId;
 
-  console.log(req.body);
+  console.log("req body--->", req.body);
 
   const courseDb = await courseModel.create({
     description,
@@ -95,9 +96,10 @@ adminRouter.post("/course", adminMiddleware, async (req, res) => {
 });
 
 adminRouter.put("/course", adminMiddleware, async (req, res) => {
-  const adminId = req.userId;
-  const { description, title, price, imageUrl, creatorid, courseId } = req.body;
-  const adminCourse = await adminModel.updateOne(
+  const adminId = req.adminId;
+  console.log(adminId);
+  const { description, title, price, imageUrl, courseId } = req.body;
+  const adminCourse = await courseModel.updateOne(
     {
       _id: courseId,
       creatorid: adminId,
@@ -107,21 +109,24 @@ adminRouter.put("/course", adminMiddleware, async (req, res) => {
       title: title,
       price: price,
       imageUrl: imageUrl,
-      creatorid: creatorid,
     }
   );
   res.status(200).json({
     msg: "Your course has been updated",
+    courseId: courseId,
   });
 });
 
-adminRouter.get("/course/bulk", adminMiddleware, (req, res) => {
-  const { adminId } = req.body;
+adminRouter.get("/course/bulk", adminMiddleware, async (req, res) => {
+  const creatorId = req.adminId;
 
-  const adminCourse = adminModel.find({
-    creatorid: adminId,
+  console.log("creator id--->", creatorId);
+
+  const adminCourse = await courseModel.find({
+    creatorid: creatorId,
   });
 
+  console.log(adminCourse);
   res.status(200).json({
     adminCourse,
   });
