@@ -73,6 +73,7 @@ adminRouter.post("/login", async (req, res) => {
 });
 
 adminRouter.post("/course", adminMiddleware, async (req, res) => {
+  console.log("req----->", req);
   const { description, title, price, imageUrl } = req.body;
 
   const adminId = req.adminId;
